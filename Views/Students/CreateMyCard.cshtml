@@ -1,0 +1,84 @@
+@model SchoolBoard.Models.Student
+@{
+    ViewData["Title"] = "Подать заявку на Доску почёта";
+    var categories = ViewBag.Categories as List<SchoolBoard.Models.Category>;
+}
+<div class="container my-5">
+    <h2 class="mb-4" style="color: var(--orange);">СОЗДАТЬ МОЮ КАРТОЧКУ</h2>
+    <p>Заполни данные о себе. После отправки твоя заявка попадёт на модерацию.</p>
+
+    <form method="post" enctype="multipart/form-data">
+        @Html.AntiForgeryToken()
+        <div asp-validation-summary="All" class="text-danger"></div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label asp-for="LastName" class="form-label fw-bold">Фамилия *</label>
+                <input asp-for="LastName" class="form-control" required maxlength="100" />
+            </div>
+            <div class="col-md-6 mb-3">
+                <label asp-for="FirstName" class="form-label fw-bold">Имя *</label>
+                <input asp-for="FirstName" class="form-control" required maxlength="100" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label asp-for="MiddleName" class="form-label">Отчество</label>
+                <input asp-for="MiddleName" class="form-control" maxlength="100" />
+            </div>
+            <div class="col-md-6 mb-3">
+                <label asp-for="Class" class="form-label">Класс</label>
+                <input asp-for="Class" class="form-control" maxlength="20" />
+            </div>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Quote" class="form-label">Цитата / Девиз</label>
+            <input asp-for="Quote" class="form-control" maxlength="500" />
+        </div>
+        <div class="mb-3">
+            <label asp-for="Achievements" class="form-label">Награды (каждая с новой строки)</label>
+            <textarea asp-for="Achievements" class="form-control" rows="5" placeholder="Победитель олимпиады по математике&#10;Призёр городского конкурса чтецов"></textarea>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Biography" class="form-label">Биография</label>
+            <textarea asp-for="Biography" class="form-control" rows="6"></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label fw-bold">Категории</label>
+            @if (categories != null)
+            {
+                <div class="row">
+                    @foreach (var cat in categories)
+                    {
+                        <div class="col-md-4">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" name="categoryIds" value="@cat.Id" id="cat_@cat.Id" />
+                                <label class="form-check-label" for="cat_@cat.Id" style="border-left: 4px solid @(cat.Color ?? "var(--orange)"); padding-left: 8px;">
+                                    @if (!string.IsNullOrEmpty(cat.Icon))
+                                    {
+                                        <i class="@cat.Icon me-1"></i>
+                                    }
+                                    @cat.Name
+                                </label>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label fw-bold">Фотографии (макс. 3, до 2 МБ каждая, .jpg/.jpeg/.png/.gif)</label>
+            <input type="file" name="newPhotos" multiple accept=".jpg,.jpeg,.png,.gif" class="form-control" />
+            <small class="text-muted">Первое фото будет главным.</small>
+        </div>
+
+        <button type="submit" class="btn btn-primary">ОТПРАВИТЬ ЗАЯВКУ</button>
+        <a asp-controller="Profile" asp-action="Index" class="btn btn-outline-secondary">ОТМЕНА</a>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

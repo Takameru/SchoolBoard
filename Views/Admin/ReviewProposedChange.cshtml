@@ -1,0 +1,89 @@
+@model SchoolBoard.Models.ProposedChange
+@{
+    ViewData["Title"] = "Рассмотрение предложения";
+    var oldData = ViewBag.OldData as Dictionary<string, object> ?? new Dictionary<string, object>();
+    var newData = ViewBag.NewData as Dictionary<string, object> ?? new Dictionary<string, object>();
+    var oldPhotos = ViewBag.OldPhotos as List<string> ?? new List<string>();
+    var newPhotos = ViewBag.NewPhotos as List<string> ?? new List<string>();
+}
+<div class="container my-5">
+    <h2 class="mb-4" style="color: var(--orange);">РАССМОТРЕНИЕ ИЗМЕНЕНИЙ</h2>
+
+    <p><strong>Ученик:</strong> @Model.Student.LastName @Model.Student.FirstName</p>
+    <p><strong>Предложил:</strong> @Model.ProposedByUser.UserName</p>
+    <p><strong>Дата:</strong> @Model.ProposedDate.ToString("dd.MM.yyyy HH:mm")</p>
+
+    <h4 class="mt-4">Сравнение данных</h4>
+    <table class="table table-bordered">
+        <thead class="table-light">
+            <tr>
+                <th>Поле</th>
+                <th>Было</th>
+                <th>Стало</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var key in newData.Keys)
+            {
+                string old = oldData.ContainsKey(key) ? oldData[key]?.ToString() ?? "" : "";
+                string newVal = newData[key]?.ToString() ?? "";
+                bool changed = old != newVal;
+                <tr>
+                    <td>@key</td>
+                    <td class="@(changed ? "text-danger" : "")">@old</td>
+                    <td class="@(changed ? "text-success fw-bold" : "")">@newVal</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <h4 class="mt-4">Фотографии</h4>
+    <div class="row">
+        <div class="col-md-6">
+            <h5>Старые фото</h5>
+            @if (oldPhotos.Any())
+            {
+                @foreach (var photo in oldPhotos)
+                {
+                    <img src="~/uploads/students/@photo" class="img-thumbnail mb-2" style="max-width: 200px;" />
+                }
+            }
+            else
+            {
+                <p class="text-muted">Нет фото</p>
+            }
+        </div>
+        <div class="col-md-6">
+            <h5>Новые фото (временные)</h5>
+            @if (newPhotos.Any())
+            {
+                @foreach (var photo in newPhotos)
+                {
+                    <img src="~/uploads/temp/@photo" class="img-thumbnail mb-2" style="max-width: 200px;" />
+                }
+            }
+            else
+            {
+                <p class="text-muted">Фото не предложены</p>
+            }
+        </div>
+    </div>
+
+    @if (Model.Status == ChangeStatus.Pending)
+    {
+        <div class="mt-4">
+            <form asp-action="ApproveChange" asp-route-id="@Model.Id" method="post" class="d-inline">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-success me-2">ПРИНЯТЬ</button>
+            </form>
+            <form asp-action="RejectChange" asp-route-id="@Model.Id" method="post" class="d-inline">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-danger" onclick="return confirm('Отклонить изменения? Временные фото будут удалены.');">ОТКЛОНИТЬ</button>
+            </form>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-secondary mt-4">Это предложение уже обработано.</div>
+    }
+</div>

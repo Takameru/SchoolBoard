@@ -1,0 +1,45 @@
+@model SchoolBoard.Models.Category
+@{
+    ViewData["Title"] = "Редактирование категории";
+}
+
+<div class="container my-5">
+    <h2 class="mb-4" style="color: var(--orange);">РЕДАКТИРОВАТЬ КАТЕГОРИЮ</h2>
+
+    <form asp-action="EditCategory" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="mb-3">
+            <label asp-for="Name" class="form-label fw-bold">Название</label>
+            <input asp-for="Name" class="form-control" maxlength="100" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Color" class="form-label fw-bold">Цвет (HEX)</label>
+            <input asp-for="Color" class="form-control" maxlength="7" placeholder="#e67e22" />
+            <span asp-validation-for="Color" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Icon" class="form-label fw-bold">Иконка Font Awesome (класс)</label>
+            <input asp-for="Icon" class="form-control" maxlength="50" placeholder="fa-solid fa-star" />
+            <span asp-validation-for="Icon" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="SortOrder" class="form-label fw-bold">Порядок сортировки</label>
+            <input asp-for="SortOrder" type="number" class="form-control" />
+            <span asp-validation-for="SortOrder" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary">СОХРАНИТЬ</button>
+        <a asp-action="Categories" class="btn btn-outline-secondary">ОТМЕНА</a>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

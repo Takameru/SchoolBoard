@@ -1,0 +1,28 @@
+@model SchoolBoard.Models.ApplicationUser
+@{
+    ViewData["Title"] = "Редактирование пользователя";
+    var userRoles = ViewBag.UserRoles as IList<string> ?? new List<string>();
+    var allRoles = ViewBag.AllRoles as List<string> ?? new List<string>();
+}
+<div class="container my-5">
+    <h2 class="mb-4" style="color: var(--orange);">РЕДАКТИРОВАНИЕ @Model.Email</h2>
+    <form method="post">
+        @Html.AntiForgeryToken()
+        <div class="mb-3">
+            <label class="form-label fw-bold">Право подачи заявок (CanApply)</label>
+            <input class="form-check-input" type="checkbox" name="canApply" value="true" @(Model.CanApply ? "checked" : "") />
+        </div>
+        <div class="mb-3">
+            <label class="form-label fw-bold">Роли</label>
+            @foreach (var role in allRoles)
+            {
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="selectedRoles" value="@role" id="role_@role" @(userRoles.Contains(role) ? "checked" : "") />
+                    <label class="form-check-label" for="role_@role">@role</label>
+                </div>
+            }
+        </div>
+        <button type="submit" class="btn btn-primary">СОХРАНИТЬ</button>
+        <a asp-action="Users" class="btn btn-outline-secondary">ОТМЕНА</a>
+    </form>
+</div>

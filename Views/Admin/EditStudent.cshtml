@@ -1,0 +1,127 @@
+@model SchoolBoard.Models.Student
+@{
+    ViewData["Title"] = "Редактировать ученика";
+    var categories = ViewBag.Categories as List<SchoolBoard.Models.Category>;
+    var users = ViewBag.Users as List<SchoolBoard.Models.ApplicationUser>;
+}
+<div class="container my-5">
+    <h2 class="mb-4" style="color: var(--orange);">РЕДАКТИРОВАНИЕ УЧЕНИКА</h2>
+
+    <form method="post" enctype="multipart/form-data">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+        <div asp-validation-summary="All" class="text-danger"></div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label asp-for="LastName" class="form-label fw-bold">Фамилия *</label>
+                <input asp-for="LastName" class="form-control" required maxlength="100" />
+            </div>
+            <div class="col-md-6 mb-3">
+                <label asp-for="FirstName" class="form-label fw-bold">Имя *</label>
+                <input asp-for="FirstName" class="form-control" required maxlength="100" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label asp-for="MiddleName" class="form-label">Отчество</label>
+                <input asp-for="MiddleName" class="form-control" maxlength="100" />
+            </div>
+            <div class="col-md-6 mb-3">
+                <label asp-for="Class" class="form-label">Класс</label>
+                <input asp-for="Class" class="form-control" maxlength="20" />
+            </div>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Quote" class="form-label">Цитата</label>
+            <input asp-for="Quote" class="form-control" maxlength="500" />
+        </div>
+        <div class="mb-3">
+            <label asp-for="Achievements" class="form-label">Награды (каждая с новой строки)</label>
+            <textarea asp-for="Achievements" class="form-control" rows="4"></textarea>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Biography" class="form-label">Биография</label>
+            <textarea asp-for="Biography" class="form-control" rows="6"></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label fw-bold">Категории</label>
+            @if (categories != null)
+            {
+                <div class="row">
+                    @foreach (var cat in categories)
+                    {
+                        <div class="col-md-4">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" name="categoryIds" value="@cat.Id" id="cat_@cat.Id"
+                                       @(Model.StudentCategories.Any(sc => sc.CategoryId == cat.Id) ? "checked" : "") />
+                                <label class="form-check-label" for="cat_@cat.Id" style="border-left: 4px solid @(cat.Color ?? "var(--orange)"); padding-left: 8px;">
+                                    @if (!string.IsNullOrEmpty(cat.Icon)) { <i class="@cat.Icon me-1"></i> } @cat.Name
+                                </label>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label fw-bold">Приоритетная категория</label>
+            <select name="preferredCategoryId" class="form-select">
+                <option value="">— Автоматически —</option>
+                @if (categories != null)
+                {
+                    @foreach (var cat in categories)
+                    {
+                        <option value="@cat.Id" selected="@(Model.PreferredCategoryId == cat.Id ? "selected" : null)">@cat.Name</option>
+                    }
+                }
+            </select>
+        </div>
+
+        <!-- Привязка пользователя -->
+        <div class="mb-3">
+            <label class="form-label fw-bold">Привязанный пользователь</label>
+            <select name="identityUserId" class="form-select">
+                <option value="">— Не привязан —</option>
+                @if (users != null)
+                {
+                    @foreach (var user in users)
+                    {
+                        <option value="@user.Id" selected="@(Model.IdentityUserId == user.Id ? "selected" : null)">@user.Email</option>
+                    }
+                }
+            </select>
+        </div>
+
+        <!-- Специальный статус -->
+        <div class="mb-3">
+            <label class="form-label fw-bold">Специальный статус</label>
+            <div class="input-group">
+                <input type="text" name="specialStatus" class="form-control" placeholder="Например: !В КУРАЖЕ!" value="@Model.SpecialStatus" maxlength="50" />
+                <div class="input-group-text">
+                    <input class="form-check-input mt-0" type="checkbox" name="showSpecialStatus" value="true" @(Model.ShowSpecialStatus ? "checked" : "") />
+                    <label class="form-check-label ms-1">Показывать</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-3 form-check">
+            <input class="form-check-input" type="checkbox" name="canEdit" value="true" id="canEdit" @(Model.CanEdit ? "checked" : "") />
+            <label class="form-check-label" for="canEdit">Может редактировать свою карточку</label>
+        </div>
+
+        <div class="mb-3 form-check">
+            <input class="form-check-input" type="checkbox" name="showNewBadge" value="true" id="showNewBadge" @(Model.ShowNewBadge ? "checked" : "") />
+            <label class="form-check-label" for="showNewBadge">Показывать бейдж «!НОВЫЙ!» (если ученик новый)</label>
+        </div>
+
+        <button type="submit" class="btn btn-primary">СОХРАНИТЬ</button>
+        <a asp-action="AllStudents" class="btn btn-outline-secondary">ОТМЕНА</a>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

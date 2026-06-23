@@ -1,0 +1,18 @@
+@page
+@model LogoutModel
+@{
+    ViewData["Title"] = "Выход";
+}
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 text-center">
+            <h2 class="mb-4" style="color: var(--orange);">ВЫХОД</h2>
+            <p>Вы уверены, что хотите выйти?</p>
+            <form asp-route-returnUrl="@Model.ReturnUrl" method="post">
+                <button type="submit" class="btn btn-primary">ВЫЙТИ</button>
+                <a href="/" class="btn btn-outline-secondary">ОТМЕНА</a>
+            </form>
+        </div>
+    </div>
+</div>

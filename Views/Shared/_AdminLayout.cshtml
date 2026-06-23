@@ -1,0 +1,63 @@
+@{
+    Layout = "_Layout";
+}
+
+<div class="container-fluid admin-container">
+    <div class="row">
+        <nav class="col-md-3 col-lg-2 d-md-block admin-sidebar">
+            <div class="sidebar-header">
+                <h5 class="sidebar-title">АДМИН-ПАНЕЛЬ</h5>
+            </div>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link @(Context.Request.Path.Value?.Contains("/Admin/Categories") == true ? "active" : "")" 
+                       asp-controller="Admin" asp-action="Categories">
+                        <i class="fa-solid fa-list me-2"></i> Категории
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link @(Context.Request.Path.Value?.Contains("/Admin/AddStudent") == true ? "active" : "")" 
+                       asp-controller="Admin" asp-action="AddStudent">
+                        <i class="fa-solid fa-plus me-2"></i> Добавить ученика
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link @(Context.Request.Path.Value?.Contains("/Admin/PendingStudents") == true ? "active" : "")" 
+                       asp-controller="Admin" asp-action="PendingStudents">
+                        <i class="fa-solid fa-clock me-2"></i> Модерация
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link @(Context.Request.Path.Value?.Contains("/Admin/ProposedChanges") == true ? "active" : "")" 
+                       asp-controller="Admin" asp-action="ProposedChanges">
+                        <i class="fa-solid fa-pen-to-square me-2"></i> Предложения учеников
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link @(Context.Request.Path.Value?.Contains("/Admin/AllStudents") == true ? "active" : "")" 
+                       asp-controller="Admin" asp-action="AllStudents">
+                        <i class="fa-solid fa-users me-2"></i> Все ученики
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link @(Context.Request.Path.Value?.Contains("/Admin/Users") == true ? "active" : "")" 
+                       asp-controller="Admin" asp-action="Users">
+                        <i class="fa-solid fa-users-gear me-2"></i> Пользователи
+                    </a>
+                </li>
+                <li class="nav-item mt-4">
+                    <a class="nav-link" asp-controller="Home" asp-action="Index">
+                        <i class="fa-solid fa-arrow-left me-2"></i> На сайт
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 admin-content">
+            @RenderBody()
+        </main>
+    </div>
+</div>
+
+@section Scripts {
+    @RenderSection("Scripts", required: false)
+}

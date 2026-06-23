@@ -1,0 +1,37 @@
+@model SchoolBoard.Models.Student
+@{
+    var mainPhoto = Model.Photos?.FirstOrDefault(p => p.IsMain) ?? Model.Photos?.FirstOrDefault();
+    var moscowNow = DateTime.UtcNow.AddHours(3);
+    bool isNew = (moscowNow - Model.CreatedDate).TotalDays < 7;
+}
+<div class="student-card">
+    @if (Model.ShowSpecialStatus && !string.IsNullOrEmpty(Model.SpecialStatus))
+    {
+        <div class="badge-new">@Model.SpecialStatus</div>
+    }
+    else if (Model.ShowNewBadge && isNew)
+    {
+        <div class="badge-new">!НОВЫЙ!</div>
+    }
+    @if (mainPhoto != null)
+    {
+        <img src="~/uploads/students/@mainPhoto.FileName" class="card-img-top" alt="@Model.LastName @Model.FirstName">
+    }
+    else
+    {
+        <div class="card-img-placeholder" style="height: 220px; background-color: #3498db; border-bottom: 3px solid var(--mint);"></div>
+    }
+    <div class="img-overlay">
+        <a asp-controller="Students" asp-action="Details" asp-route-id="@Model.Id" class="btn btn-primary btn-sm">Смотреть подробнее</a>
+    </div>
+    <div class="card-body">
+        <div class="card-title">@Model.LastName @Model.FirstName</div>
+        <div class="card-subtitle">
+            @Model.Class @if (Model.StudentCategories.Any()) { <text>/ @string.Join(", ", Model.StudentCategories.Select(sc => sc.Category.Name))</text> }
+        </div>
+        @if (!string.IsNullOrEmpty(Model.Quote))
+        {
+            <div class="quote">@Model.Quote</div>
+        }
+    </div>
+</div>

@@ -1,0 +1,25 @@
+@model List<SchoolBoard.Models.Category>
+
+<li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle @(ViewContext.RouteData.Values["controller"]?.ToString() == "Board" ? "active" : "")" 
+       href="#" id="categoryDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+        Категории
+    </a>
+    <ul class="dropdown-menu" style="background-color: rgba(44, 44, 44, 0.98); border-radius: 0; border: none;" aria-labelledby="categoryDropdown">
+        @foreach (var cat in Model)
+        {
+            <li>
+                <a class="dropdown-item text-white" style="transition: background-color 0.2s;" 
+                   asp-controller="Board" asp-action="Category" asp-route-id="@cat.Id"
+                   onmouseover="this.style.backgroundColor='var(--orange)'" 
+                   onmouseout="this.style.backgroundColor='transparent'">
+                    @if (!string.IsNullOrEmpty(cat.Icon))
+                    {
+                        <i class="@cat.Icon me-1"></i>
+                    }
+                    @cat.Name
+                </a>
+            </li>
+        }
+    </ul>
+</li>

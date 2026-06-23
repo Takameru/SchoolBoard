@@ -1,0 +1,55 @@
+@model List<SchoolBoard.Models.Student>
+@{
+    ViewData["Title"] = "Категория";
+    var category = ViewBag.Category as SchoolBoard.Models.Category;
+}
+<div class="container my-5">
+    <a asp-controller="Board" asp-action="Index" class="btn btn-outline-secondary mb-4">
+        <i class="fa-solid fa-arrow-left"></i> НАЗАД К ДОСКЕ
+    </a>
+
+    <h2 class="mb-4" style="color: @(ViewBag.Category?.Color ?? "var(--orange)");">
+    @if (!string.IsNullOrEmpty(ViewBag.Category?.Icon))
+    {
+        <i class="@ViewBag.Category.Icon me-2"></i>
+    }
+    @ViewBag.Category?.Name
+</h2>
+
+    <!-- Фильтр -->
+    <form method="get" class="filter-bar">
+        <div class="row g-3 align-items-center">
+            <div class="col-md-6">
+                <div class="input-group">
+                    <span class="input-group-text bg-white border-end-0"><i class="fa-solid fa-magnifying-glass" style="color: var(--orange);"></i></span>
+                    <input type="text" class="form-control border-start-0" placeholder="Поиск по фамилии..." name="searchString" value="@ViewBag.SearchString">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <select class="form-select" name="sortOrder">
+                    <option value="" selected="@(ViewBag.SortOrder == null || ViewBag.SortOrder == "newest")">Сначала новые</option>
+                    <option value="oldest" selected="@(ViewBag.SortOrder == "oldest")">Сначала старые</option>
+                    <option value="name_asc" selected="@(ViewBag.SortOrder == "name_asc")">От А до Я</option>
+                    <option value="name_desc" selected="@(ViewBag.SortOrder == "name_desc")">От Я до А</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100">НАЙТИ</button>
+            </div>
+        </div>
+    </form>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">В этой категории пока нет учеников.</div>
+    }
+    else
+    {
+        <div class="students-grid">
+            @foreach (var student in Model)
+            {
+                <partial name="_StudentCard" model="student" />
+            }
+        </div>
+    }
+</div>

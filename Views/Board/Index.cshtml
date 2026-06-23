@@ -1,0 +1,101 @@
+@model SchoolBoard.Models.ViewModels.BoardIndexViewModel
+@{
+    ViewData["Title"] = "Доска почёта";
+}
+
+<!-- ==================== HERO (РАЗДЕЛЁННЫЙ) ==================== -->
+<section class="hero-split">
+    <div class="hero-split-left">
+        <h1>ДОСКА ПОЧЁТА</h1>
+        <p class="lead">Звёзды зажигают нашу школу</p>
+        <p>Это галерея лучших учеников, отобранных педагогическим советом за выдающиеся успехи в учёбе, спорте и творчестве. Каждый из них — гордость школы и пример для подражания.</p>
+        <a href="#board" class="btn btn-primary btn-lg">ПЕРЕЙТИ К ДОСКЕ</a>
+    </div>
+    <div class="hero-split-right d-none d-md-block" style="background-image: url('/images/school-hero1.jpg');"></div>
+</section>
+
+<!-- ==================== СЕТКА ==================== -->
+<section id="board" class="section-full bg-white">
+    <div class="container">
+        <h2 class="text-center mb-4" style="color: var(--orange);">ВСЯ ДОСКА ПОЧЕТА</h2>
+
+        <form method="get" asp-action="Index" class="filter-bar">
+            <div class="row g-3 align-items-center">
+                <div class="col-md-5">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0"><i class="fa-solid fa-magnifying-glass" style="color: var(--orange);"></i></span>
+                        <input type="text" class="form-control border-start-0" placeholder="Поиск по фамилии..." name="searchString" value="@Model.SearchString">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <select class="form-select" name="sortOrder">
+                        <option value="" selected="@(Model.SortOrder == null || Model.SortOrder == "newest")">Сначала новые</option>
+                        <option value="oldest" selected="@(Model.SortOrder == "oldest")">Сначала старые</option>
+                        <option value="name_asc" selected="@(Model.SortOrder == "name_asc")">От А до Я</option>
+                        <option value="name_desc" selected="@(Model.SortOrder == "name_desc")">От Я до А</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-find w-100">НАЙТИ</button>
+                </div>
+            </div>
+        </form>
+
+        @if (!Model.GridStudents.Any())
+        {
+            <div class="alert alert-info text-center">Пока нет учеников на доске почёта.</div>
+        }
+        else
+        {
+            <div class="students-grid">
+                @foreach (var student in Model.GridStudents)
+                {
+                    <partial name="_StudentCard" model="student" />
+                }
+            </div>
+        }
+    </div>
+</section>
+
+<!-- ==================== КАТЕГОРИИ (ЛЕНТЫ) ==================== -->
+<section id="categories" class="section-full bg-light">
+    <div class="container">
+        <h2 class="text-center mb-5">КАТЕГОРИИ ДОСТИЖЕНИЙ</h2>
+
+        @if (!Model.CategoryRibbons.Any())
+        {
+            <div class="alert alert-info text-center">Категории пока не созданы.</div>
+        }
+        else
+        {
+            <div class="ribbon-list">
+                @foreach (var ribbon in Model.CategoryRibbons)
+                {
+                    <div class="ribbon-container">
+                        <div class="ribbon-sidebar" style="background-color: @(ribbon.Category.Color ?? "var(--orange)");">
+                            @if (!string.IsNullOrEmpty(ribbon.Category.Icon))
+                            {
+                                <i class="@ribbon.Category.Icon"></i>
+                            }
+                            else
+                            {
+                                <i class="fa-solid fa-star"></i>
+                            }
+                            <span>@ribbon.Category.Name</span>
+                        </div>
+                        <div class="ribbon-scroll">
+                            @foreach (var student in ribbon.Students)
+                            {
+                                <partial name="_StudentCard" model="student" />
+                            }
+                            <a asp-controller="Board" asp-action="Category" asp-route-id="@ribbon.Category.Id" class="ribbon-end-btn">
+                                <i class="fa-solid fa-arrow-right"></i>
+                                <span>СМОТРЕТЬ ЕЩЕ</span>
+                            </a>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</section>

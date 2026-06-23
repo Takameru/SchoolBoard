@@ -1,0 +1,66 @@
+@model List<SchoolBoard.Models.ProposedChange>
+@{
+    ViewData["Title"] = "Предложения учеников";
+}
+<div class="container my-5">
+    <h2 class="mb-4" style="color: var(--orange);">ПРЕДЛОЖЕНИЯ УЧЕНИКОВ</h2>
+
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-success">@TempData["Message"]</div>
+    }
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">Нет предложенных изменений.</div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Ученик</th>
+                        <th>Предложил</th>
+                        <th>Дата</th>
+                        <th>Статус</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var change in Model)
+                    {
+                        <tr>
+                            <td>@change.Student.LastName @change.Student.FirstName</td>
+                            <td>@change.ProposedByUser.UserName</td>
+                            <td>@change.ProposedDate.ToString("dd.MM.yyyy HH:mm")</td>
+                            <td>
+                                @if (change.Status == ChangeStatus.Pending)
+                                {
+                                    <span class="badge bg-warning text-dark">На рассмотрении</span>
+                                }
+                                else if (change.Status == ChangeStatus.Approved)
+                                {
+                                    <span class="badge bg-success">Принято</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger">Отклонено</span>
+                                }
+                            </td>
+                            <td>
+                                @if (change.Status == ChangeStatus.Pending)
+                                {
+                                    <a asp-action="ReviewProposedChange" asp-route-id="@change.Id" class="btn btn-sm btn-outline-primary">РАССМОТРЕТЬ</a>
+                                }
+                                else
+                                {
+                                    <a asp-action="ReviewProposedChange" asp-route-id="@change.Id" class="btn btn-sm btn-outline-secondary">Просмотр</a>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

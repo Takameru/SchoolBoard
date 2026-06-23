@@ -1,0 +1,173 @@
+@model SchoolBoard.Models.Student
+@{
+    ViewData["Title"] = $"{Model.LastName} {Model.FirstName}";
+    var isLiked = ViewData["IsLiked"] as bool? ?? false;
+    var likesCount = ViewData["LikesCount"] as int? ?? 0;
+}
+
+<!-- Подключение Swiper CSS только на этой странице -->
+@section Styles {
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <style>
+        .swiper {
+            width: 100%;
+            max-height: 500px;
+            margin-bottom: 2rem;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+        }
+        .swiper-slide img {
+            width: 100%;
+            height: 500px;
+            object-fit: cover;
+        }
+        .swiper-button-next, .swiper-button-prev {
+            color: var(--white);
+            background: rgba(0,0,0,0.4);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+    </style>
+}
+
+<div class="container my-5">
+    <a asp-controller="Board" asp-action="Index" class="btn btn-outline-secondary mb-4">
+        <i class="fa-solid fa-arrow-left"></i> НАЗАД К ДОСКЕ
+    </a>
+
+    <div class="row">
+        <!-- Левая колонка (фото + информация) -->
+        <div class="col-lg-8">
+            @if (Model.Photos.Any())
+            {
+                <div class="swiper">
+                    <div class="swiper-wrapper">
+                        @foreach (var photo in Model.Photos.OrderBy(p => p.UploadOrder))
+                        {
+                            <div class="swiper-slide">
+                                <img src="~/uploads/students/@photo.FileName" alt="@Model.LastName @Model.FirstName" />
+                            </div>
+                        }
+                    </div>
+                    @if (Model.Photos.Count > 1)
+                    {
+                        <div class="swiper-button-next"></div>
+                        <div class="swiper-button-prev"></div>
+                    }
+                    <div class="swiper-pagination"></div>
+                </div>
+            }
+            else
+            {
+                <div style="height:300px; background-color:#3498db; display:flex; align-items:center; justify-content:center; color:white; font-size:2rem; border-radius: var(--border-radius);">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+            }
+
+            <h1 class="mb-2" style="color: var(--orange);">@Model.LastName @Model.FirstName @Model.MiddleName</h1>
+            @if (!string.IsNullOrEmpty(Model.Class))
+            {
+                <p class="text-muted mb-3" style="font-size:1.2rem;">Класс: @Model.Class</p>
+            }
+
+            @if (!string.IsNullOrEmpty(Model.Quote))
+            {
+                <blockquote class="blockquote" style="border-left: 3px solid var(--orange); padding-left: 1rem; font-style: italic;">
+                    @Model.Quote
+                </blockquote>
+            }
+
+            <div class="mt-4">
+                <h5>Биография</h5>
+                <div>
+                    @Html.Raw(Model.Biography)
+                </div>
+            </div>
+        </div>
+
+        <!-- Правая колонка (бейджи категорий, награды, лайки) -->
+        <div class="col-lg-4">
+            <div class="card shadow-sm mb-4" style="border-radius: var(--border-radius);">
+                <div class="card-body">
+                    <h5 class="card-title">Категории</h5>
+                    <div class="d-flex flex-wrap gap-2">
+                        @foreach (var sc in Model.StudentCategories)
+                        {
+                            var color = sc.Category.Color ?? "#e67e22";
+                            <span class="badge" style="background-color: @color; color: white; font-family: var(--font-body); padding: 0.5em 0.8em; border-radius: var(--border-radius);">
+                                @if (!string.IsNullOrEmpty(sc.Category.Icon))
+                                {
+                                    <i class="@sc.Category.Icon me-1"></i>
+                                }
+                                @sc.Category.Name
+                            </span>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            @if (!string.IsNullOrEmpty(Model.Achievements))
+            {
+                <div class="card shadow-sm mb-4" style="border-radius: var(--border-radius);">
+                    <div class="card-body">
+                        <h5 class="card-title">Награды</h5>
+                        <ul class="mb-0">
+                            @foreach (var achievement in Model.Achievements.Split('\n', StringSplitOptions.RemoveEmptyEntries))
+                            {
+                                <li>@achievement.Trim()</li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            }
+
+            <div class="card shadow-sm" style="border-radius: var(--border-radius);">
+                <div class="card-body text-center">
+                    <p class="h4 mb-3"><i class="fa-solid fa-heart" style="color: var(--orange);"></i> @likesCount</p>
+                    @if (User.Identity != null && User.Identity.IsAuthenticated)
+                    {
+                        <form asp-action="@(isLiked ? "Unlike" : "Like")" asp-route-id="@Model.Id" method="post">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn @(isLiked ? "btn-outline-danger" : "btn-primary")">
+                                @if (isLiked)
+                                {
+                                    <i class="fa-solid fa-heart-broken"></i> <text>УБРАТЬ ЛАЙК</text>
+                                }
+                                else
+                                {
+                                    <i class="fa-solid fa-heart"></i> <text>НРАВИТСЯ</text>
+                                }
+                            </button>
+                        </form>
+                    }
+                    else
+                    {
+                        <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-outline-primary">
+                            <i class="fa-solid fa-sign-in-alt"></i> ВОЙДИТЕ, ЧТОБЫ ЛАЙКНУТЬ
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const swiper = new Swiper('.swiper', {
+                loop: @(Model.Photos.Count > 1 ? "true" : "false"),
+                pagination: {
+                    el: '.swiper-pagination',
+                    clickable: true,
+                },
+                navigation: {
+                    nextEl: '.swiper-button-next',
+                    prevEl: '.swiper-button-prev',
+                },
+            });
+        });
+    </script>
+}

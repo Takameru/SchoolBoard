@@ -1,0 +1,87 @@
+@model List<SchoolBoard.Models.Student>
+@{
+    ViewData["Title"] = "Все ученики";
+}
+<div class="container my-5">
+    <h2 class="mb-4" style="color: var(--orange);">ВСЕ УЧЕНИКИ</h2>
+
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-success">@TempData["Message"]</div>
+    }
+
+    <!-- Фильтр/поиск -->
+    <form method="get" class="row g-3 mb-4">
+        <div class="col-md-6">
+            <input type="text" name="searchString" class="form-control" placeholder="Поиск..." value="@ViewData["SearchString"]" />
+        </div>
+        <div class="col-md-3">
+            <select name="sortOrder" class="form-select">
+                <option value="" selected="@(ViewData["SortOrder"] == null || ViewData["SortOrder"]?.ToString() == "newest")">Сначала новые</option>
+                <option value="oldest" selected="@(ViewData["SortOrder"]?.ToString() == "oldest")">Сначала старые</option>
+                <option value="name_asc" selected="@(ViewData["SortOrder"]?.ToString() == "name_asc")">А-Я</option>
+                <option value="name_desc" selected="@(ViewData["SortOrder"]?.ToString() == "name_desc")">Я-А</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <button type="submit" class="btn btn-primary w-100">ПРИМЕНИТЬ</button>
+        </div>
+    </form>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">Нет учеников.</div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>ФИО</th>
+                        <th>Класс</th>
+                        <th>Статус</th>
+                        <th>Категории</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var student in Model)
+                    {
+                        <tr>
+                            <td>@student.LastName @student.FirstName @student.MiddleName</td>
+                            <td>@student.Class</td>
+                            <td>
+                                @if (student.Status == StudentStatus.Active)
+                                {
+                                    <span class="badge bg-success">Активен</span>
+                                }
+                                else if (student.Status == StudentStatus.Pending)
+                                {
+                                    <span class="badge bg-warning text-dark">На проверке</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">Отклонён</span>
+                                }
+                            </td>
+                            <td>
+                                @foreach (var sc in student.StudentCategories)
+                                {
+                                    <span class="badge me-1" style="background-color: @(sc.Category.Color ?? "#e67e22");">@sc.Category.Name</span>
+                                }
+                            </td>
+                            <td>
+                                <a asp-action="EditStudent" asp-route-id="@student.Id" class="btn btn-sm btn-outline-primary me-1">РЕДАКТ.</a>
+                                <form asp-action="DeleteStudent" asp-route-id="@student.Id" method="post" class="d-inline" onsubmit="return confirm('Удалить ученика?');">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">УДАЛИТЬ</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

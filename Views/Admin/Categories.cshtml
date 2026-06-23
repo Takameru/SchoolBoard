@@ -1,0 +1,80 @@
+@model List<SchoolBoard.Models.Category>
+@{
+    ViewData["Title"] = "Управление категориями";
+}
+
+<div class="container my-5">
+    <h2 class="mb-4" style="color: var(--orange);">КАТЕГОРИИ</h2>
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+
+    <a asp-action="CreateCategory" class="btn btn-primary mb-3">
+        <i class="fa-solid fa-plus"></i> ДОБАВИТЬ КАТЕГОРИЮ
+    </a>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">Категории отсутствуют. Создайте первую.</div>
+    }
+    else
+    {
+        <table class="table table-bordered table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Название</th>
+                    <th>Цвет</th>
+                    <th>Иконка</th>
+                    <th>Учеников</th>
+                    <th>Порядок</th>
+                    <th style="width: 200px;">Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var cat in Model)
+                {
+                    <tr>
+                        <td>@cat.Name</td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(cat.Color))
+                            {
+                                <span style="display:inline-block; width:30px; height:20px; background-color:@cat.Color; border:1px solid #ccc;"></span>
+                                <span>@cat.Color</span>
+                            }
+                            else
+                            {
+                                <span class="text-muted">—</span>
+                            }
+                        </td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(cat.Icon))
+                            {
+                                <i class="@cat.Icon"></i>
+                                <span>@cat.Icon</span>
+                            }
+                            else
+                            {
+                                <span class="text-muted">—</span>
+                            }
+                        </td>
+                        <td>@cat.StudentCategories.Count</td>
+                        <td>@cat.SortOrder</td>
+                        <td>
+                            <a asp-action="EditCategory" asp-route-id="@cat.Id" class="btn btn-sm btn-outline-primary me-1">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </a>
+                            <form asp-action="DeleteCategory" asp-route-id="@cat.Id" method="post" class="d-inline" onsubmit="return confirm('Удалить категорию «@cat.Name»?');">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-sm btn-outline-danger">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>

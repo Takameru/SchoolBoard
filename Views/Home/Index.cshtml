@@ -1,0 +1,60 @@
+﻿@{
+    ViewData["Title"] = "Главная";
+}
+
+<!-- ==================== HERO ==================== -->
+<section id="hero-section" style="background-image: url('/images/school-hero.jpg');">
+    <div class="hero-overlay">
+        <h1>ИНТЕРАКТИВНАЯ ШКОЛА</h1>
+        <p class="hero-subtitle">Смотри на обучение через призму современности</p>
+        <div class="d-flex gap-3 flex-wrap justify-content-center">
+            <a asp-controller="Board" asp-action="Index" class="btn btn-primary btn-lg">ДОСКА ПОЧЁТА</a>
+            <a href="#how-to" class="btn btn-outline-light btn-lg">КАК ПОПАСТЬ НА ДОСКУ</a>
+        </div>
+    </div>
+</section>
+
+<!-- ==================== ЦЕЛИ ==================== -->
+<section id="goals" class="section-full bg-white">
+    <div class="container">
+        <h2 class="text-center mb-5" style="color: var(--orange);">НАШИ ЦЕЛИ</h2>
+        <div class="goal-boxes">
+            <div class="goal-box">
+                <i class="fa-solid fa-bullseye"></i>
+                <p>Формирование лидерских качеств и активной гражданской позиции.</p>
+            </div>
+            <div class="goal-box">
+                <i class="fa-solid fa-lightbulb"></i>
+                <p>Развитие творческих и интеллектуальных способностей каждого ученика.</p>
+            </div>
+            <div class="goal-box">
+                <i class="fa-solid fa-heart"></i>
+                <p>Воспитание патриотизма, уважения к истории и традициям школы.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ==================== КАК ПОПАСТЬ ==================== -->
+<section id="how-to" class="section-full bg-light">
+    <div class="container">
+        <h2 class="text-center mb-5">КАК ПОПАДАЮТ НА ДОСКУ ПОЧЁТА</h2>
+        <div class="steps-grid">
+            <div class="step-card">
+                <i class="fa-solid fa-user-check"></i>
+                <h3>Выдвижение</h3>
+                <p>Учителя и классные руководители выдвигают кандидатов на основе успеваемости и достижений.</p>
+            </div>
+            <div class="step-card">
+                <i class="fa-solid fa-users"></i>
+                <h3>Обсуждение</h3>
+                <p>Педагогический совет проводит открытое голосование по каждой кандидатуре.</p>
+            </div>
+            <div class="step-card">
+                <i class="fa-solid fa-trophy"></i>
+                <h3>Утверждение</h3>
+                <p>Администрация школы утверждает список учеников, которые попадают на Доску почёта.</p>
+            </div>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,204 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Средняя школа №11 г. Гомеля</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" 
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" 
+          integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" 
+          crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- Google Fonts: Oswald (500, 700), Montserrat (300, 400, 500, 600, 700, italic) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,600&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
+
+    <!-- Кастомные стили -->
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+    @RenderSection("Styles", required: false)
+</head>
+<body>
+    @{
+        var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+        var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+    }
+
+    <!-- ==================== НАВБАР ==================== -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <a class="navbar-brand" asp-controller="Home" asp-action="Index">ШКОЛА №11</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Переключатель навигации" id="navbarToggler">
+                <div class="toggler-icon" id="togglerIcon">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link @(currentController == "Home" && currentAction == "Index" ? "active" : "")" 
+                           asp-controller="Home" asp-action="Index">Главная</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link @(currentController == "Home" && currentAction == "About" ? "active" : "")" 
+                           asp-controller="Home" asp-action="About">О проекте</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link @(currentController == "Board" && currentAction == "Index" ? "active" : "")" 
+                           asp-controller="Board" asp-action="Index">Доска почёта</a>
+                    </li>
+                    @await Component.InvokeAsync("CategoryDropdown")
+                </ul>
+                <ul class="navbar-nav">
+                    @if (User.Identity != null && User.Identity.IsAuthenticated)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link @(currentController == "Profile" ? "active" : "")" asp-controller="Profile" asp-action="Index">
+                                <i class="fa-solid fa-user me-1" style="color: var(--orange);"></i> Профиль
+                            </a>
+                        </li>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link @(currentController == "Admin" ? "active" : "")" asp-controller="Admin" asp-action="Categories">Админка</a>
+                            </li>
+                        }
+                    }
+                    else
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="Identity" asp-page="/Account/Login">Войти</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="Identity" asp-page="/Account/Register">Регистрация</a>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div id="global-overlay"></div>
+
+    <main role="main">
+        @RenderBody()
+    </main>
+
+    <button id="scrollTopBtn" title="Наверх"><i class="fa-solid fa-arrow-up"></i></button>
+
+    <!-- ==================== ФУТЕР ==================== -->
+    <footer class="footer mt-auto">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="footer-brand">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                        <span>ГУО «Средняя школа №11<br>г. Гомеля»</span>
+                    </div>
+                    <p class="small">Официальная доска почёта лучших учеников.</p>
+                    <p class="small">&copy; @DateTime.Now.Year Все права защищены.</p>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h5>Навигация</h5>
+                    <ul class="list-unstyled">
+                        <li><a asp-controller="Home" asp-action="Index">Главная</a></li>
+                        <li><a asp-controller="Board" asp-action="Index">Доска почёта</a></li>
+                        <li><a asp-controller="Home" asp-action="About">Справка о проекте</a></li>
+                        <li><a href="https://gomelschool11.by" target="_blank">Официальный сайт школы</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h5>Контакты</h5>
+                    <ul class="list-unstyled contact-info">
+                        <li><i class="fa-solid fa-map-marker-alt"></i> г. Гомель, ул. Жарковского, 19</li>
+                        <li><i class="fa-solid fa-phone"></i> +375 (232) 32-00-35</li>
+                        <li><i class="fa-solid fa-envelope"></i> <a href="mailto:school11@gomel.centroo.by">school11@gomel.centroo.by</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" 
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+    <script>
+        const togglerIcon = document.getElementById('togglerIcon');
+        const navbarToggler = document.getElementById('navbarToggler');
+        if (togglerIcon && navbarToggler) {
+            navbarToggler.addEventListener('click', function() {
+                togglerIcon.classList.toggle('open');
+            });
+        }
+    </script>
+
+    <script>
+        (function() {
+            const overlay = document.getElementById('global-overlay');
+            if (!overlay) return;
+            document.addEventListener('mouseover', function(e) {
+                const card = e.target.closest('.student-card');
+                if (card && !card.classList.contains('marquee-card')) {
+                    overlay.classList.add('show');
+                }
+            });
+            document.addEventListener('mouseout', function(e) {
+                const card = e.target.closest('.student-card');
+                if (card && !card.classList.contains('marquee-card') && !card.contains(e.relatedTarget)) {
+                    overlay.classList.remove('show');
+                }
+            });
+        })();
+    </script>
+
+    <script>
+        const scrollTopBtn = document.getElementById('scrollTopBtn');
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 300) {
+                scrollTopBtn.classList.add('show');
+            } else {
+                scrollTopBtn.classList.remove('show');
+            }
+        });
+        scrollTopBtn.addEventListener('click', function() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    </script>
+
+    @RenderSection("Scripts", required: false)
+    <!-- Уведомление о куки -->
+<div id="cookie-consent">
+    <div class="container">
+        <p>Мы используем файлы cookie и localStorage для обеспечения работы сайта и авторизации. Продолжая использовать сайт, вы соглашаетесь с этим.</p>
+        <button class="btn-accept" id="accept-cookies">ПРИНЯТЬ</button>
+    </div>
+</div>
+
+<script>
+    (function() {
+        const consent = document.getElementById('cookie-consent');
+        const btn = document.getElementById('accept-cookies');
+        if (!consent || !btn) return;
+
+        // Показываем, если ранее не было согласия
+        if (!localStorage.getItem('cookieConsent')) {
+            consent.style.display = 'block';
+        }
+
+        btn.addEventListener('click', function() {
+            localStorage.setItem('cookieConsent', 'true');
+            consent.style.display = 'none';
+        });
+    })();
+</script>
+</body>
+</html>
