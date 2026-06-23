@@ -27,8 +27,8 @@ namespace SchoolBoard.Controllers
         {
             _context = context;
             _htmlSanitizer = htmlSanitizer;
-            _uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "students");
-            _uploadTempPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "temp");
+            _uploadPath = Path.Combine("/data", "uploads", "students");
+            _uploadTempPath = Path.Combine("/data", "uploads", "temp");
         }
 
         // GET: /Students/Details/5

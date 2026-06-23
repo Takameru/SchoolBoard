@@ -34,7 +34,7 @@ namespace SchoolBoard.Controllers
             _htmlSanitizer = htmlSanitizer;
             _userManager = userManager;
             _roleManager = roleManager;
-            _uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "students");
+            _uploadPath = Path.Combine("/data", "uploads", "students");
         }
 
         // ==================== КАТЕГОРИИ ====================

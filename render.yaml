@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: schoolboard
+    env: docker
+    repo: https://github.com/Takameru/SchoolBoard.git
+    region: frankfurt
+    plan: free
+    branch: main
+    dockerfilePath: ./Dockerfile
+    disk:
+      name: school-data
+      mountPath: /data
+      sizeGB: 1
+    envVars:
+      - key: ASPNETCORE_URLS
+        value: http://+:80
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production

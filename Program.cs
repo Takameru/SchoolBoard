@@ -11,7 +11,8 @@ using Ganss.Xss;
 using Microsoft.AspNetCore.Http;
 
 var builder = WebApplication.CreateBuilder(args);
-
+Directory.CreateDirectory("/data/uploads/students");
+Directory.CreateDirectory("/data/uploads/temp");
 // SQLite
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
